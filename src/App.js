@@ -14,7 +14,8 @@ class App extends Component {
       filter:{
         name :'',
         status: -1
-      }
+      },
+      keyword : ''
     };
   }
 
@@ -138,8 +139,14 @@ class App extends Component {
     this.onShowForm();
   };
 
+  onSearch = (keyword) =>{
+    this.setState({
+      keyword: keyword
+    })
+  }
+
   render() {
-    var { tasks, isDisplayForm, taskEditing , filter } = this.state;
+    var { tasks, isDisplayForm, taskEditing , filter ,keyword} = this.state;
     if(filter){
       if(filter.name){
        tasks=tasks.filter((task)=>{
@@ -153,6 +160,11 @@ class App extends Component {
             return task.status ===  (filter.status === 1 ? true : false) 
           }
         })
+    }
+    if(keyword){
+      tasks=tasks.filter((task)=>{
+        return task.name.toLowerCase().indexOf(keyword) !== -1
+      })
     }
     var elmTaskForm = isDisplayForm ? (
       <TaskForm
@@ -192,7 +204,7 @@ class App extends Component {
               <span className="fa fa-plus mr-5" />
               Thêm Công Việc
             </button>
-            <Control />
+            <Control onSearch = {this.onSearch} />
             <div className="row mt-15">
               <TaskList
                 tasks={tasks}
