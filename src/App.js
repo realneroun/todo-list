@@ -3,6 +3,7 @@ import "./App.css";
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
 import Control from "./components/Control";
+import _ from "lodash";
 
 class App extends Component {
   constructor(props) {
@@ -11,13 +12,13 @@ class App extends Component {
       tasks: [],
       isDisplayForm: false,
       taskEditing: null,
-      filter:{
-        name :'',
-        status: -1
+      filter: {
+        name: "",
+        status: -1,
       },
-      keyword : '',
-      sortByte :'name',
-      sortValue : 1
+      keyword: "",
+      sortByte: "name",
+      sortValue: 1,
     };
   }
 
@@ -68,15 +69,15 @@ class App extends Component {
     });
   };
 
-  onFilter = (filterName , filterStatus) => {
-    filterStatus = parseInt(filterStatus)
+  onFilter = (filterName, filterStatus) => {
+    filterStatus = parseInt(filterStatus);
     this.setState({
-      filter : {
-        name :filterName.toLowerCase(),
-        status : filterStatus
-      }
-    })
-  }
+      filter: {
+        name: filterName.toLowerCase(),
+        status: filterStatus,
+      },
+    });
+  };
 
   onSubmit = (data) => {
     var { tasks } = this.state;
@@ -97,7 +98,10 @@ class App extends Component {
 
   onUpdateStatus = (id) => {
     var { tasks } = this.state;
-    var index = this.findIndex(id);
+    // var index = this.findIndex(id);
+    var index = _.findIndex(tasks, (o) => {
+      return o.id === id;
+    });
     if (index !== -1) {
       tasks[index].status = !tasks[index].status;
       this.setState({
@@ -141,52 +145,67 @@ class App extends Component {
     this.onShowForm();
   };
 
-  onSearch = (keyword) =>{
+  onSearch = (keyword) => {
     this.setState({
-      keyword: keyword
-    })
-  }
+      keyword: keyword,
+    });
+  };
 
-  onSort = (sortByte,sortValue) =>{
+  onSort = (sortByte, sortValue) => {
     this.setState({
-      sortByte : sortByte,
-      sortValue : sortValue
-    })
-  }
+      sortByte: sortByte,
+      sortValue: sortValue,
+    });
+  };
 
   render() {
-    var { tasks, isDisplayForm, taskEditing , filter ,keyword , sortByte,sortValue} = this.state;
-    if(sortByte === 'name'){
-      tasks.sort((a,b) =>{
+    var {
+      tasks,
+      isDisplayForm,
+      taskEditing,
+      filter,
+      keyword,
+      sortByte,
+      sortValue,
+    } = this.state;
+    if (sortByte === "name") {
+      tasks.sort((a, b) => {
         if (a.name > b.name) return sortValue;
-        else if(a.name < b.name) return -sortValue;
+        else if (a.name < b.name) return -sortValue;
         else return 0;
-      })
-    }else 
-      tasks.sort((a,b) =>{
+      });
+    } else
+      tasks.sort((a, b) => {
         if (a.status > b.status) return -sortValue;
-        else if(a.status < b.status) return sortValue;
+        else if (a.status < b.status) return sortValue;
         else return 0;
-      })
-    if(filter){
-      if(filter.name){
-       tasks=tasks.filter((task)=>{
-          return task.name.toLowerCase().indexOf(filter.name) !== -1
-        })
+      });
+    if (filter) {
+      if (filter.name) {
+        tasks = tasks.filter((task) => {
+          return task.name.toLowerCase().indexOf(filter.name) !== -1;
+        });
       }
-        tasks = tasks.filter((task)=>{
-          if(filter.status === -1){
-            return task;
-          }else{
-            return task.status ===  (filter.status === 1 ? true : false) 
-          }
-        })
+
+
+      tasks = tasks.filter((task) => {
+        if (filter.status === -1) {
+          return task;
+        } else {
+          return task.status === (filter.status === 1 ? true : false);
+        }
+      });
     }
-    if(keyword){
-      tasks=tasks.filter((task)=>{
-        return task.name.toLowerCase().indexOf(keyword) !== -1
-      })
-    }
+    // if (keyword) {
+    //   tasks = tasks.filter((task) => {
+    //     return task.name.toLowerCase().indexOf(keyword) !== -1;
+    //   });
+    // }
+
+    tasks = _.filter(tasks ,(o)=>{
+      return o.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
+    })
+
     var elmTaskForm = isDisplayForm ? (
       <TaskForm
         onSubmit={this.onSubmit}
@@ -225,10 +244,11 @@ class App extends Component {
               <span className="fa fa-plus mr-5" />
               Thêm Công Việc
             </button>
-            <Control onSearch = {this.onSearch}
-            onSort={this.onSort}
-            sortByte={sortByte}
-            sortValue= {sortValue}
+            <Control
+              onSearch={this.onSearch}
+              onSort={this.onSort}
+              sortByte={sortByte}
+              sortValue={sortValue}
             />
             <div className="row mt-15">
               <TaskList
