@@ -1,40 +1,41 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import * as actions from "../actions/index";
 
 class TaskForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      id : "",
+      id: "",
       name: "",
       status: true,
     };
   }
 
   componentDidMount() {
-   if(this.props.task){
-    this.setState({
-      id : this.props.task.id,
-      name : this.props.task.name,
-      status : this.props.task.status
-    })
-   } 
+    if (this.props.task) {
+      this.setState({
+        id: this.props.task.id,
+        name: this.props.task.name,
+        status: this.props.task.status,
+      });
+    }
   }
 
-
-  UNSAFE_componentWillReceiveProps(nextProps){
-    if(nextProps && nextProps.task){
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if (nextProps && nextProps.task) {
       this.setState({
-        id : nextProps.task.id,
-        name : nextProps.task.name,
-        status : nextProps.task.status
-      })
-     }else if(nextProps && nextProps.task === null){
+        id: nextProps.task.id,
+        name: nextProps.task.name,
+        status: nextProps.task.status,
+      });
+    } else if (nextProps && nextProps.task === null) {
       this.setState({
-        id : '',
-        name : '',
-        status : true
-      })
-     }
+        id: "",
+        name: "",
+        status: true,
+      });
+    }
   }
 
   onCloseForm = () => {
@@ -55,24 +56,26 @@ class TaskForm extends Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-    this.props.onSubmit(this.state);
+    this.props.onAddTask(this.state);
+    // this.props.onSubmit(this.state);
     this.onClear();
-    this.onCloseForm()
+    this.onCloseForm();
   };
 
   onClear = () => {
     this.setState({
-      name: '',
-      status: false
-    })
-  }
+      name: "",
+      status: false,
+    });
+  };
 
   render() {
-    var {id} = this.state;
+    var { id } = this.state;
     return (
       <div className="panel panel-warning">
         <div className="panel-heading">
-          <h3 className="panel-title">{ id != '' ? 'Cập nhật công việc': 'Thêm công việc'}
+          <h3 className="panel-title">
+            {id !== "" ? "Cập nhật công việc" : "Thêm công việc"}
             <span
               className="fa fa-times-circle text-right"
               onClick={this.onCloseForm}
@@ -97,7 +100,7 @@ class TaskForm extends Component {
               required="required"
               name="status"
               value={this.state.status}
-              onChange={this.onChange}    
+              onChange={this.onChange}
             >
               <option value={true}>Kích Hoạt</option>
               <option value={false}>Ẩn</option>
@@ -108,7 +111,11 @@ class TaskForm extends Component {
                 Thêm
               </button>
               &nbsp;
-              <button type="button" className="btn btn-danger" onClick={this.onClear}>
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={this.onClear}
+              >
                 Hủy Bỏ
               </button>
             </div>
@@ -119,4 +126,16 @@ class TaskForm extends Component {
   }
 }
 
-export default TaskForm;
+const mapStateToProps = (state) => {
+  return;
+};
+
+const mapDispatchToProps = (dispatch, props) => {
+  return {
+    onAddTask: (task) => {
+      dispatch(actions.addTask(task));
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(TaskForm);

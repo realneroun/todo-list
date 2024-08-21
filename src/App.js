@@ -9,8 +9,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      tasks: [],
-      isDisplayForm: false,
+      // isDisplayForm: false,
       taskEditing: null,
       filter: {
         name: "",
@@ -22,25 +21,6 @@ class App extends Component {
     };
   }
 
-  componentDidMount() {
-    // console.log("Component Will Mount");
-    if (localStorage && localStorage.getItem("tasks")) {
-      var tasks = JSON.parse(localStorage.getItem("tasks"));
-      this.setState({
-        tasks: tasks,
-      });
-    }
-  }
-
-  s4() {
-    return Math.floor((1 + Math.random()) * 0x10000)
-      .toString(16)
-      .substring(1);
-  }
-
-  generateID() {
-    return this.s4() + this.s4() + "-" + this.s4() + "-" + this.s4();
-  }
 
   onToggleForm = () => {
     if (this.state.isDisplayForm && this.state.taskEditing !== null) {
@@ -79,22 +59,22 @@ class App extends Component {
     });
   };
 
-  onSubmit = (data) => {
-    var { tasks } = this.state;
-    if (data.id === "") {
-      data.id = this.generateID();
-      tasks.push(data);
-    } else {
-      var index = this.findIndex(data.id);
-      tasks[index] = data;
-    }
+  // onSubmit = (data) => {
+  //   var { tasks } = this.state;
+  //   if (data.id === "") {
+  //     data.id = this.generateID();
+  //     tasks.push(data);
+  //   } else {
+  //     var index = this.findIndex(data.id);
+  //     tasks[index] = data;
+  //   }
 
-    this.setState({
-      tasks: tasks,
-      taskEditing: null,
-    });
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  };
+  //   this.setState({
+  //     tasks: tasks,
+  //     taskEditing: null,
+  //   });
+  //   localStorage.setItem("tasks", JSON.stringify(tasks));
+  // };
 
   onUpdateStatus = (id) => {
     var { tasks } = this.state;
@@ -160,55 +140,53 @@ class App extends Component {
 
   render() {
     var {
-      tasks,
       isDisplayForm,
       taskEditing,
-      filter,
-      keyword,
+      // filter,
+      // keyword,
       sortByte,
       sortValue,
     } = this.state;
-    if (sortByte === "name") {
-      tasks.sort((a, b) => {
-        if (a.name > b.name) return sortValue;
-        else if (a.name < b.name) return -sortValue;
-        else return 0;
-      });
-    } else
-      tasks.sort((a, b) => {
-        if (a.status > b.status) return -sortValue;
-        else if (a.status < b.status) return sortValue;
-        else return 0;
-      });
-    if (filter) {
-      if (filter.name) {
-        tasks = tasks.filter((task) => {
-          return task.name.toLowerCase().indexOf(filter.name) !== -1;
-        });
-      }
+    // if (sortByte === "name") {
+    //   tasks.sort((a, b) => {
+    //     if (a.name > b.name) return sortValue;
+    //     else if (a.name < b.name) return -sortValue;
+    //     else return 0;
+    //   });
+    // } else
+    //   tasks.sort((a, b) => {
+    //     if (a.status > b.status) return -sortValue;
+    //     else if (a.status < b.status) return sortValue;
+    //     else return 0;
+    //   });
+    // if (filter) {
+    //   if (filter.name) {
+    //     tasks = tasks.filter((task) => {
+    //       return task.name.toLowerCase().indexOf(filter.name) !== -1;
+    //     });
+    //   }
 
-
-      tasks = tasks.filter((task) => {
-        if (filter.status === -1) {
-          return task;
-        } else {
-          return task.status === (filter.status === 1 ? true : false);
-        }
-      });
-    }
+    //   tasks = tasks.filter((task) => {
+    //     if (filter.status === -1) {
+    //       return task;
+    //     } else {
+    //       return task.status === (filter.status === 1 ? true : false);
+    //     }
+    //   });
+    // }
     // if (keyword) {
     //   tasks = tasks.filter((task) => {
     //     return task.name.toLowerCase().indexOf(keyword) !== -1;
     //   });
     // }
 
-    tasks = _.filter(tasks ,(o)=>{
-      return o.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
-    })
+    // tasks = _.filter(tasks, (o) => {
+    //   return o.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
+    // });
 
     var elmTaskForm = isDisplayForm ? (
       <TaskForm
-        onSubmit={this.onSubmit}
+        // onSubmit={this.onSubmit}
         task={taskEditing}
         onCloseForm={this.onCloseForm}
       />
@@ -252,7 +230,6 @@ class App extends Component {
             />
             <div className="row mt-15">
               <TaskList
-                tasks={tasks}
                 onUpdateStatus={this.onUpdateStatus}
                 onUpdate={this.onUpdate}
                 onDelete={this.onDelete}
